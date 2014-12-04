@@ -1,0 +1,105 @@
+"State 1"
+P[1]=10[kPa]
+x[1]=0
+T[1]=Temperature(Steam_IAPWS,P=P[1],x=x[1])
+s[1]=Entropy(Steam_IAPWS,P=P[1],x=x[1])
+h[1]=Enthalpy(Steam_IAPWS,P=P[1],x=x[1])
+m[1]=m[7]
+
+"State 2"
+P[2]=800[kPa]
+s[2]=s[1]
+T[2]=Temperature(Steam_IAPWS,P=P[2],s=s[2])
+h[2]=Enthalpy(Steam_IAPWS,P=P[2],s=s[2])
+m[2]=m[7]
+
+"Work of Pump 1"
+Wp[1]=h[2]-h[1]
+
+"State 3"
+P[3]=P[2]
+x[3]=0
+T[3]=Temperature(Steam_IAPWS,P=P[3],x=x[3])
+s[3]=Entropy(Steam_IAPWS,P=P[3],x=x[3])
+h[3]=Enthalpy(Steam_IAPWS,P=P[3],x=x[3])
+m[3]=m[2]+m[6]
+
+"State 4"
+P[4]=5000[kPa]
+T[4]=Temperature(Steam_IAPWS,P=P[4],s=s[4])
+s[4]=s[3]
+h[4]=Enthalpy(Steam_IAPWS,P=P[4],s=s[4])
+m[4]=m[3]
+
+"Work of Pump 2"
+Wp[2]=h[4]-h[3]
+
+"State 5"
+P[5]=P[4]
+T[5]=623.15[K]
+s[5]=Entropy(Steam_IAPWS,P=P[5],T=T[5])
+h[5]=Enthalpy(Steam_IAPWS,T=T[5],P=P[5])
+m[5]=m[4]
+
+"Heat Transfer in HE"
+
+"State 6 Ideal"
+P[6]=Pressure(Steam_IAPWS,T=T[6],s=s[6])
+T[6]=T[3]
+s[6]=s[5]
+h[6]=Enthalpy(Steam_IAPWS,T=T[6],s=s[6])
+m[6]=y_ideal*m[5]
+
+"State 6 Real"
+
+"State 7 Ideal"
+P[7]=Pressure(Steam_IAPWS,T=T[7],s=s[7])
+T[7]=T[1]
+s[7]=s[6]
+h[7]=Enthalpy(Steam_IAPWS,T=T[7],s=s[7])
+y_ideal=(h[3]-h[2])/(h[6]-h[2])	"Extraction Fraction"
+m[7]=(1-y_ideal)*m[5]
+
+"State 7 Real"
+
+"Work of Turbine"
+w_turbine_ideal=h[5]-h[6]+(1-y_ideal)*(h[6]-h[7])
+w_turbine_real=n_Turb*w_turbine_ideal
+
+"State 8"
+T[8]=300[K]
+P[8]=101[kPa]
+s[8]=Entropy(Air,T=T[8],P=P[8])
+h[8]=Enthalpy(Air,T=T[8])
+
+"Work of the compressor"
+{w_comp_ideal=}
+{w_comp_real=w_compr_ideal/n_Comp}
+
+"State 9"
+P[9]=11*P[8]
+s_ideal9=s[8]
+T[9]=Temperature(Air,P=P[9], s=s_ideal9)
+h_ideal9=Enthalpy(Air,T=T[9])
+h[9]=(h_ideal9-h[8])/.82+h[8]
+ s[9]=Entropy(Air,P=P[9],h=h[9])
+
+"State 10"
+P[10]=P[9]
+T[10]=1100[K]
+h[10]=Enthalpy(Air, T=T[10])
+s[10]=Entropy(Air,P=P[10],T=T[10])
+
+"State 11"
+P[11]=P[8]
+T[11]=Temperature(Air,P=P[11],s=s_ideal11)
+s_ideal11=s[10]
+h_ideal11=Enthalpy(Air, T=T[11])
+h[11]=(h_ideal11-h[10])/.86+h[10]
+s[11]=Entropy(Air,P=P[11],h=h[11])
+
+"State 12"
+
+"Given Constants"
+n_Comp=0.82
+n_Turb=0.86
